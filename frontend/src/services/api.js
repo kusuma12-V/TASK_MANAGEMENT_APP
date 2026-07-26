@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://KusumaV.pythonanywhere.com"
+    baseURL: "https://KavanaV.pythonanywhere.com"
 });
 
 export default api;
