@@ -16,6 +16,11 @@ def register():
 
     data = request.get_json()
 
+    print("Received Data:", data)
+
+    if not data:
+        return jsonify({"message": "No JSON data received"}), 400
+
     existing = User.query.filter_by(email=data["email"]).first()
 
     if existing:
