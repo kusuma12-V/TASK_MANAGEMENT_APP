@@ -1,36 +1,41 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 
 function Login() {
 
-    const [email,setEmail]=useState("");
-    const [password,setPassword]=useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const handleSubmit=async(e)=>{
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
-        try{
+        try {
 
-            const response=await loginUser({
+            const response = await loginUser({
                 email,
                 password
             });
 
-            alert(response.data.message);
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("userName", response.data.name);
 
-        }
+            alert("Login Successful");
 
-        catch{
+            navigate("/dashboard");
+
+        } catch {
 
             alert("Invalid Email or Password");
 
         }
 
-    }
+    };
 
-    return(
-
+    return (
         <div className="container mt-5">
 
             <h2>Login</h2>
@@ -38,10 +43,12 @@ function Login() {
             <form onSubmit={handleSubmit}>
 
                 <input
+                    type="email"
                     className="form-control mb-3"
                     placeholder="Email"
                     value={email}
-                    onChange={(e)=>setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                 />
 
                 <input
@@ -49,7 +56,8 @@ function Login() {
                     className="form-control mb-3"
                     placeholder="Password"
                     value={password}
-                    onChange={(e)=>setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                 />
 
                 <button className="btn btn-primary">
@@ -59,9 +67,7 @@ function Login() {
             </form>
 
         </div>
-
-    )
-
+    );
 }
 
 export default Login;

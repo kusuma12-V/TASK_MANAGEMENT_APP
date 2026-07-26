@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getTasks } from "../services/taskService";
 import TaskCard from "../components/TaskCard";
 
 function Dashboard() {
+
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
+
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+
     loadTasks();
+
   }, []);
 
   const loadTasks = async () => {
@@ -19,10 +31,23 @@ function Dashboard() {
     }
   };
 
+  const logout = () => {
+
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userName");
+
+    alert("Logged Out Successfully");
+
+    navigate("/login");
+
+  };
+
   const totalTasks = tasks.length;
+
   const completedTasks = tasks.filter(
     (task) => task.status === "Completed"
   ).length;
+
   const pendingTasks = tasks.filter(
     (task) => task.status === "Pending"
   ).length;
@@ -30,16 +55,32 @@ function Dashboard() {
   return (
     <div className="container mt-5">
 
-      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Task Dashboard</h2>
 
-        <Link to="/add-task" className="btn btn-primary">
-          + Add Task
-        </Link>
+        <h2>
+          Welcome {localStorage.getItem("userName")}
+        </h2>
+
+        <div>
+
+          <Link
+            to="/add-task"
+            className="btn btn-primary me-2"
+          >
+            + Add Task
+          </Link>
+
+          <button
+            className="btn btn-danger"
+            onClick={logout}
+          >
+            Logout
+          </button>
+
+        </div>
+
       </div>
 
-      {/* Dashboard Cards */}
       <div className="row mb-4">
 
         <div className="col-md-4">
@@ -71,8 +112,6 @@ function Dashboard() {
 
       </div>
 
-      {/* Task List */}
-
       {tasks.length === 0 ? (
         <div className="alert alert-info">
           No Tasks Found
@@ -86,6 +125,7 @@ function Dashboard() {
           />
         ))
       )}
+
     </div>
   );
 }
